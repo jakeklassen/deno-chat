@@ -23,14 +23,6 @@ export const Chat = ({ datacenter, username }: ChatProps) => {
 
   const [chatLog, setChatLog] = createSignal<ChatLog[]>([]);
 
-  onMount(() => {
-    const messageInput = document.getElementById(
-      "message-input",
-    ) as HTMLInputElement;
-
-    messageInput.focus();
-  });
-
   createEffect(() => {
     if (readyState() === WebSocket.OPEN) {
       clearInterval(interval);
@@ -42,6 +34,18 @@ export const Chat = ({ datacenter, username }: ChatProps) => {
         }),
       );
     }
+  });
+
+  onMount(() => {
+    const messageInput = document.getElementById(
+      "message-input",
+    ) as HTMLInputElement;
+
+    messageInput.focus();
+  });
+
+  onCleanup(() => {
+    ws.close();
   });
 
   createEffect(() => {
@@ -97,10 +101,6 @@ export const Chat = ({ datacenter, username }: ChatProps) => {
 
     setChatLog((chatLog) => [...chatLog, logItem]);
   };
-
-  onCleanup(() => {
-    ws.close();
-  });
 
   return (
     <>

@@ -13,14 +13,10 @@
   },
   "dependencies": {
     "clsx": "^1.2.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "solid-js": "^1.6.0"
   },
   "devDependencies": {
     "@types/node": "^18.11.4",
-    "@types/react": "^18.0.21",
-    "@types/react-dom": "^18.0.6",
     "@vitejs/plugin-react": "^2.1.0",
     "autoprefixer": "^10.4.12",
     "babel-preset-solid": "^1.6.0",

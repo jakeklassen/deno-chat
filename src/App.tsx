@@ -41,9 +41,7 @@ function App() {
               <h1 class="text-2xl font-bold sm:text-3xl">🦕 Chat</h1>
 
               <p class="mt-4 text-gray-500">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Et
-                libero nulla eaque error neque ipsa culpa autem, at itaque
-                nostrum!
+                A chat app built with Deno and Solid.js
               </p>
             </div>
 

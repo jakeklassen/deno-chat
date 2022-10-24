@@ -1,12 +1,5 @@
 import clsx from "clsx";
-import {
-  createResource,
-  createSignal,
-  JSX,
-  Match,
-  Show,
-  Switch,
-} from "solid-js";
+import { createResource, createSignal, JSX, Match, Switch } from "solid-js";
 import { Chat } from "./components/Chat";
 
 const fetchDc = async () => {

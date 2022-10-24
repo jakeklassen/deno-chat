@@ -79,19 +79,21 @@ export const Chat = ({ datacenter, username }: ChatProps) => {
     const data = JSON.parse(e.data);
     const payload = JSON.parse(data.payload);
 
+    // Ignore join messages from self
     if (payload.type === "join" && payload.username === username) {
       return;
     }
 
-    const logItem = {
-      message:
-        payload.type === "join"
-          ? `${payload.username} joined`
-          : payload.message,
+    let logItem = {
+      message: payload.message,
       type: payload.type,
       username: payload.username,
       timestamp: new Date(),
     };
+
+    if (payload.type === "join") {
+      logItem.message = `${payload.username} joined`;
+    }
 
     setChatLog((chatLog) => [...chatLog, logItem]);
   };

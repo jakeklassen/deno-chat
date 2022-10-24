@@ -42,7 +42,7 @@ export const Chat = ({ datacenter, username }: ChatProps) => {
     messageInput.focus();
   });
 
-  const ws = new WebSocket("ws://localhost:8000");
+  const ws = new WebSocket(import.meta.env.VITE_WEBSOCKET_SERVER);
 
   const onKeyUp: JSX.EventHandlerUnion<HTMLInputElement, KeyboardEvent> = (
     e,

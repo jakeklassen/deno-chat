@@ -134,7 +134,7 @@ export const Chat = ({ datacenter, username }: ChatProps) => {
 
         <div class="relative">
           <input
-            class="appearance-none border pl-12 border-gray-200 focus:placeholder-gray-600 transition rounded-md w-full py-2 px-3 text-gray-600 leading-tight focus:outline-none focus:ring-gray-600 focus:shadow-outline"
+            class="appearance-none border pl-12 border-gray-200 focus:placeholder-gray-600 transition rounded-md w-full py-4 px-3 text-gray-600 leading-tight focus:outline-none focus:ring-gray-600 focus:shadow-outline"
             id="message-input"
             onKeyUp={onKeyUp}
             type="text"

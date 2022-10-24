@@ -65,7 +65,13 @@ export const Chat = ({ datacenter, username }: ChatProps) => {
         return;
       }
 
-      ws.send(JSON.stringify({ message: e.currentTarget.value, username }));
+      ws.send(
+        JSON.stringify({
+          message: e.currentTarget.value,
+          username,
+          type: "message",
+        }),
+      );
       e.currentTarget.value = "";
     }
   };

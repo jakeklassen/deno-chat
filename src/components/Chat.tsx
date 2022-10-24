@@ -1,38 +1,30 @@
-import { createSignal, JSX, onCleanup, onMount } from "solid-js";
-
-const SAMPLE_CHAT_LOG = [
-  "Hello World!",
-  "Hi!",
-  "How are you?",
-  "This is a test",
-  "Where am I?",
-  "Read your bibles sirs!",
-  "Man I'm bored, and boredom is the first step to relapse",
-  "I'm not a robot",
-  "You're not?",
-  "Nope",
-  "What are you then?",
-  "I'm a human",
-  "I'm a human too",
-  "How interesting",
-  "Yep",
-  "I'm bored",
-  "Me too",
-  "What is love? 🎶",
-  "Baby don't hurt me",
-  "Don't hurt me",
-  "No more",
-];
+import { type } from "os";
+import { createEffect, createSignal, JSX, onCleanup, onMount } from "solid-js";
 
 type ChatProps = {
   datacenter?: string;
   username: string;
 };
 
+type ChatLog = {
+  username: string;
+  message: string;
+  type: "message" | "join" | "leave";
+  timestamp: Date;
+};
+
 export const Chat = ({ datacenter, username }: ChatProps) => {
-  const [chatLog, setChatLog] = createSignal<
-    { message: string; username: string; timestamp: Date }[]
-  >([]);
+  console.log(import.meta.env.VITE_WEBSOCKET_SERVER);
+
+  const ws = new WebSocket(import.meta.env.VITE_WEBSOCKET_SERVER);
+
+  const [readyState, setReadyState] = createSignal(ws.readyState);
+
+  const interval = setInterval(() => {
+    setReadyState(ws.readyState);
+  }, 10);
+
+  const [chatLog, setChatLog] = createSignal<ChatLog[]>([]);
 
   onMount(() => {
     const messageInput = document.getElementById(
@@ -42,7 +34,27 @@ export const Chat = ({ datacenter, username }: ChatProps) => {
     messageInput.focus();
   });
 
-  const ws = new WebSocket(import.meta.env.VITE_WEBSOCKET_SERVER);
+  createEffect(() => {
+    if (readyState() === WebSocket.OPEN) {
+      clearInterval(interval);
+
+      ws.send(
+        JSON.stringify({
+          type: "join",
+          username,
+        }),
+      );
+    }
+  });
+
+  createEffect(() => {
+    // wasteful?
+    chatLog();
+
+    const chatLogDiv = document.getElementById("chat-log") as HTMLDivElement;
+
+    chatLogDiv.scrollTop = chatLogDiv.scrollHeight;
+  });
 
   const onKeyUp: JSX.EventHandlerUnion<HTMLInputElement, KeyboardEvent> = (
     e,
@@ -62,14 +74,21 @@ export const Chat = ({ datacenter, username }: ChatProps) => {
     const data = JSON.parse(e.data);
     const payload = JSON.parse(data.payload);
 
-    setChatLog((chatLog) => [
-      ...chatLog,
-      {
-        message: payload.message,
-        username: payload.username,
-        timestamp: new Date(),
-      },
-    ]);
+    if (payload.type === "join" && payload.username === username) {
+      return;
+    }
+
+    const logItem = {
+      message:
+        payload.type === "join"
+          ? `${payload.username} joined`
+          : payload.message,
+      type: payload.type,
+      username: payload.username,
+      timestamp: new Date(),
+    };
+
+    setChatLog((chatLog) => [...chatLog, logItem]);
   };
 
   onCleanup(() => {
@@ -86,16 +105,22 @@ export const Chat = ({ datacenter, username }: ChatProps) => {
         </div>
 
         <div id="chat-log" class="h-[90%] max-h-[90%] overflow-y-auto">
-          {chatLog().map(({ message, username, timestamp }) => (
+          {chatLog().map(({ message, username, timestamp, type }) => (
             <div class="px-2 py-2 mb-1 mt-2 bg-gray-100 shadow-sm rounded-lg text-gray-700 max-w-fit">
               <p>
-                <span class="font-bold">{username}</span>{" "}
+                <span class="font-bold">
+                  {type === "message" ? username : "system"}
+                </span>{" "}
                 <span class="text-xs">
                   {timestamp.toLocaleDateString()} -{" "}
                   {timestamp.toLocaleTimeString()}
                 </span>
               </p>
-              {message}
+              {type === "message" ? (
+                message
+              ) : (
+                <span class="italic">{message}</span>
+              )}
             </div>
           ))}
         </div>

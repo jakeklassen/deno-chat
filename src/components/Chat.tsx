@@ -1,4 +1,3 @@
-import { type } from "os";
 import { createEffect, createSignal, JSX, onCleanup, onMount } from "solid-js";
 
 type ChatProps = {
@@ -14,8 +13,6 @@ type ChatLog = {
 };
 
 export const Chat = ({ datacenter, username }: ChatProps) => {
-  console.log(import.meta.env.VITE_WEBSOCKET_SERVER);
-
   const ws = new WebSocket(import.meta.env.VITE_WEBSOCKET_SERVER);
 
   const [readyState, setReadyState] = createSignal(ws.readyState);
@@ -72,6 +69,8 @@ export const Chat = ({ datacenter, username }: ChatProps) => {
           type: "message",
         }),
       );
+
+      // Clear input
       e.currentTarget.value = "";
     }
   };
